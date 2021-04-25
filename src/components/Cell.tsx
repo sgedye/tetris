@@ -1,7 +1,7 @@
-import { TETROMINOS } from "../utils/gameHelpers";
 import styled from "styled-components";
 
-type TetrominoType = keyof typeof TETROMINOS;
+import { TETROMINOS } from "../utils/gameHelpers";
+import { TetrominoType } from "../types";
 
 export const Cell: React.FC<{ type: TetrominoType }> = ({ type }) => {
   return <StyledCell color={TETROMINOS[type].color} />;

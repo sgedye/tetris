@@ -5,7 +5,7 @@ export type Stage = Cell[][];
 
 export interface Cell {
   [0]: TetrominoType;
-  [1]: string;
+  [1]: "clear" | "merged";
 }
 
 
@@ -21,7 +21,7 @@ export interface Position {
   y: number;
 }
 
-export type TetrominosShape = (string | number)[][]
+export type TetrominosShape = (0 | 'I' | 'J' | 'L' | 'O' | 'S' | 'T' | 'Z')[][]
 
 
 //TETROMINOS
@@ -41,7 +41,7 @@ export interface TetrominoInt {
 
 export interface TETROMINOS_TYPE {
 
-  shape: Array<Array<string | number>>;
+  shape: TetrominosShape;
   color: string;
 
 }

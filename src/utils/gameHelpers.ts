@@ -1,5 +1,5 @@
 
-import { PlayerProps, TETROMINOS_TYPE, Cell } from "../types"
+import { PlayerProps, TETROMINOS_TYPE, Cell, TetrominosShape } from "../types"
 export const STAGE_WIDTH = 12;
 export const STAGE_HEIGHT = 20;
 
@@ -12,9 +12,9 @@ export const createStage = (): any[][] => {
   return Array.from(Array(STAGE_HEIGHT), () => new Array(STAGE_WIDTH).fill([0, 'clear']))
 }
 
-export const checkCollision = (player: PlayerProps, stage: Cell[][], position: ({ x: number, y: number })) => {
-  const { x: playerX, y: playerY } = player.position
-  const { x: moveX, y: moveY } = position
+export const checkCollision = (player: PlayerProps, stage: Cell[][], position: ({ x: number, y: number })): boolean => {
+  const { x: playerX, y: playerY } = player.position || {}
+  const { x: moveX, y: moveY } = position || {}
   for (let y = 0; y < player.tetromino.length; y++) {
     for (let x = 0; x < player.tetromino[y].length; x++) {
       if (player.tetromino[y][x] !== 0) {
@@ -28,10 +28,44 @@ export const checkCollision = (player: PlayerProps, stage: Cell[][], position: (
       }
     }
   }
+  return false
 }
 
 
-export const TETROMINOS = {
+export const TETROMINOS: {
+  0: {
+    shape: TetrominosShape,
+    color: string;
+  },
+  I: {
+    shape: TetrominosShape,
+    color: string;
+  },
+  J: {
+    shape: TetrominosShape,
+    color: string;
+  },
+  L: {
+    shape: TetrominosShape,
+    color: string;
+  },
+  O: {
+    shape: TetrominosShape,
+    color: string;
+  },
+  S: {
+    shape: TetrominosShape,
+    color: string;
+  },
+  T: {
+    shape: TetrominosShape,
+    color: string;
+  },
+  Z: {
+    shape: TetrominosShape,
+    color: string;
+  },
+} = {
   0: { shape: [[0]], color: '0,0,0' },
   I: { shape: [[0, 'I', 0, 0], [0, 'I', 0, 0], [0, 'I', 0, 0], [0, 'I', 0, 0]], color: '80,227,230' },
   J: { shape: [[0, 'J', 0], [0, 'J', 0], ['J', 'J', 0]], color: '36,95,223' },

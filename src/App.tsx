@@ -1,12 +1,18 @@
 import { useState } from "react";
 import { Stage, Display } from "./components";
 
-import { useStage, usePlayer, createStage, checkCollision } from "./utils";
+import {
+  useStage,
+  usePlayer,
+  createStage,
+  checkCollision,
+  useInterval,
+} from "./utils";
 import { PlayerProps, Position } from "./types";
 
 function App() {
-  const [gameOver, setGameOver] = useState(false); // game in progress, disable button.
-  const [gameSpeed, setGameSpeed] = useState(null);
+  const [gameOver, setGameOver] = useState<boolean>(false); // game in progress, disable button.
+  const [gameSpeed, setGameSpeed] = useState<number>(0);
 
   const {
     player,
@@ -20,7 +26,7 @@ function App() {
     resetPlayer as () => void
   );
 
-  console.log("re-render");
+  useInterval(() => drop(), gameSpeed);
 
   const move = (e: React.KeyboardEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -33,27 +39,26 @@ function App() {
           moveLaterally(1);
           break;
         case "ArrowDown":
-          dropPlayer(false);
+          dropPlayer();
           break;
         case "ArrowUp":
           playerRotate(stage);
           break;
         case " ":
-          dropPlayer(true);
-          console.log(`--${e.key}--`);
+          dropPlayer();
           break;
       }
     }
   };
 
-  const moveLaterally = (direction: number) => {
+  const moveLaterally = (dir: number) => {
     if (
       !checkCollision(player, stage, {
-        x: direction,
+        x: dir,
         y: 0,
       })
     ) {
-      updatePlayerPosition({ x: direction, y: 0 }, false);
+      updatePlayerPosition({ x: dir, y: 0 }, false);
     }
   };
 
@@ -62,34 +67,55 @@ function App() {
     console.log("reset");
     createStage();
     resetPlayer();
+    setGameSpeed(300);
+    setGameOver(false);
+  };
+
+  const pauseGame = () => {
+    gameSpeed ? setGameSpeed(0) : setGameSpeed(300);
   };
 
   const drop = () => {
     if (!checkCollision(player, stage, { x: 0, y: 1 })) {
-      updatePlayerPosition({ x: 0, y: 1 }, false);
-    } else {
-      if (player.position.y < 1) {
-        console.log("GAME OVER");
-        setGameOver(true);
-        setGameSpeed(null);
+      return updatePlayerPosition({ x: 0, y: 1 }, false);
+    }
+
+
+    if (player.position.y < 1) {
+      console.log("GAME OVER");
+      setGameOver(true);
+      setGameSpeed(0);
+    }
+
+    updatePlayerPosition({ x: 0, y: 0 }, true);
+  };
+
+  const keyUp = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!gameOver) {
+      if (e.key === "ArrowDown") {
+        setGameSpeed(300);
+        // console.log("intervall-on");
       }
-      updatePlayerPosition({ x: 0, y: 0 }, true);
     }
   };
 
-  const dropPlayer = (hasPressedSpace: boolean) => {
-    if (!hasPressedSpace) {
-      return drop();
-    }
-    while (!checkCollision(player, stage, { x: 0, y: 1 })) {
-      updatePlayerPosition({ x: 0, y: 1 }, false);
-    }
+  const dropPlayer = () => {
+    setGameSpeed(0);
+    return drop();
+    // while (!checkCollision(player, stage, { x: 0, y: 1 })) {
+    //   updatePlayerPosition({ x: 0, y: 1 }, false);
+    // }
   };
 
-  console.log("lya", player);
-
+  console.log("re-render");
   return (
-    <div className="tetris-app" role="button" tabIndex={0} onKeyDown={move}>
+    <div
+      className="tetris-app"
+      role="button"
+      tabIndex={0}
+      onKeyDown={move}
+      onKeyUp={keyUp}
+    >
       <Stage stage={stage} />
       <aside className="row score-area">
         {gameOver ? <p>gameover</p> : null}
@@ -103,6 +129,13 @@ function App() {
             onClick={startGame}
           >
             Start Again
+          </button>
+          <button
+            // disabled={!gameOver}
+            className="btn btn-block"
+            onClick={pauseGame}
+          >
+            Pause Game
           </button>
         </div>
       </aside>
