@@ -1,15 +1,11 @@
-/* CONSTANTS */
+import styled from "styled-components";
 
-/* STAGE */
-
-/* DISPLAY */
-
-.start-btn.start-btn {
+export const StartButton = styled.button`
   padding: 0.5rem 1rem;
   color: white;
-  background-color: grey;
+  background-color: red;
   text-transform: uppercase;
   font-weight: 800;
   font-size: 1.25rem;
   border-radius: 1rem;
-}
+`;

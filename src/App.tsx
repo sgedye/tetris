@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Stage, Display } from "./components";
+import { Stage, Display, StartButton } from "./components";
 
 import {
   useStage,
@@ -23,7 +23,7 @@ function App() {
     playerRotate,
   } = usePlayer();
 
-  const { stage, rowsCleared } = useStage(
+  const { stage, setStage, rowsCleared } = useStage(
     player as PlayerProps,
     resetPlayer as () => void
   );
@@ -42,12 +42,10 @@ function App() {
     }
 
     //Check gameover
-    for (let y = 0; y <= 3; y++) {
-      if (!!stage[y].filter((cell) => cell[1] === "merged").length) {
-        console.log(`¡GAME OVER! --- You scored: ${score} points!`);
-        setGameOver(true);
-        setGameSpeed(0);
-      }
+    if (!!stage[0].filter((cell) => cell[1] === "merged").length) {
+      console.log(`¡GAME OVER! --- You scored: ${score} points!`);
+      setGameOver(true);
+      setGameSpeed(0);
     }
   }, gameSpeed);
 
@@ -87,7 +85,7 @@ function App() {
 
   const startGame = () => {
     // Reset All
-    createStage();
+    setStage(createStage());
     resetPlayer();
     setGameOver(false);
     setGameSpeed(1000 / (level + 1) + 200);
@@ -140,34 +138,39 @@ function App() {
 
   return (
     <div
-      className="tetris-app"
+      className="my-app p-4"
       role="button"
       tabIndex={0}
       onKeyDown={move}
       onKeyUp={keyUp}
     >
-      <Stage stage={stage} />
-      <aside className="row score-area">
-        {gameOver ? <p>gameover</p> : null}
-        <Display text={`Score:  ${score}`} />
-        <Display text={`Rows:  ${rows}`} />
-        <Display text={`Level:  ${level}`} />
-        <div className="col-6 col-md-12">
-          <button
-            // disabled={!gameOver}
-            className="btn btn-block start-btn"
-            onClick={startGame}
-          >
-            Start Again
-          </button>
-          <button
-            className={`btn btn-block ${gameOver && "d-none"}`}
-            onClick={pauseGame}
-          >
-            Pause Game
-          </button>
-        </div>
-      </aside>
+      <div className="text-center py-4">
+        <h1 className="text-white">TETRIS APP</h1>
+      </div>
+      <div className="tetris-app">
+        <Stage stage={stage} />
+        <aside className="row score-area">
+          {gameOver ? <p>gameover</p> : null}
+          <Display text={`Score:  ${score}`} />
+          <Display text={`Rows:  ${rows}`} />
+          <Display text={`Level:  ${level}`} />
+          <div className="col-6 col-md-12">
+            <StartButton
+              className="btn btn-block"
+              // disabled={!gameOver}
+              onClick={startGame}
+            >
+              Start Again
+            </StartButton>
+            <button
+              className={`btn btn-block ${gameOver && "d-none"}`}
+              onClick={pauseGame}
+            >
+              Pause Game
+            </button>
+          </div>
+        </aside>
+      </div>
     </div>
   );
 }

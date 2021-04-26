@@ -1,7 +1,13 @@
+.my-app {
+  min-width: 100vw;
+  max-width: 100vw;
+  min-height: 100vh;
+  background-image: url("../images/bg_stars.png");
+  background-size: cover;
+}
+
 .tetris-app {
   margin: 2rem 0;
-  width: 100vw;
-  height: 100vh;
   display: flex;
   flex-direction: column-reverse;
   align-items: center;
