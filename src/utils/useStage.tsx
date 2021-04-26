@@ -1,14 +1,7 @@
 import { useState, useEffect } from "react";
 
-import { createStage, randomTetromino, TETROMINOS, usePlayer } from ".";
-
-import {
-  TetrominoType,
-  PlayerProps,
-  Cell,
-  TETROMINOS_TYPE,
-  TetrominosShape,
-} from "../types";
+import { createStage } from ".";
+import { TetrominoType, PlayerProps, Cell } from "../types";
 
 interface useStageReturn {
   stage: Cell[][];
@@ -40,17 +33,11 @@ export const useStage = (
       const newStage: Cell[][] = prevStage.map((row) =>
         row.map((cell) => (cell[1] === "clear" ? [0, "clear"] : cell))
       );
+
       // Draw
       player.tetromino.forEach((row: TetrominoType[], y: number) => {
         row.forEach((value: TetrominoType, x: number) => {
           if (value !== 0) {
-            // console.log(
-            //   "draw: ",
-            //   player.position.x,
-            //   player.position.y,
-            //   newStage[y + player.position.y][x + player.position.x],
-            //   [value, player.collided]
-            // );
             newStage[y + player.position.y][x + player.position.x] = [
               value,
               player.collided ? "merged" : "clear",
@@ -58,8 +45,6 @@ export const useStage = (
           }
         });
       });
-
-      // Something is wrong here... when are we setting player.collided flag.
 
       // Check if we collided
       if (player.collided) {

@@ -14,7 +14,7 @@ export const Display: React.FC<DisplayProps> = ({
       <StyledDisplay className="input-group">
         <div className="input-group-prepend">
           <StyledText className="input-group-text" id="basic-addon3">
-            {text}:
+            {text}
           </StyledText>
         </div>
         <StyledInput
@@ -22,8 +22,6 @@ export const Display: React.FC<DisplayProps> = ({
           className="form-control"
           id={text}
           aria-describedby="basic-addon3"
-          value={300}
-          onChange={() => console.log("changing....")}
         />
       </StyledDisplay>
       <label htmlFor={text} className="sr-only">

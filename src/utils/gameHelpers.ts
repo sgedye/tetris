@@ -8,7 +8,7 @@ export const STAGE_HEIGHT = 20;
 //   TetrimonoType, "clear" | 'merged'
 // }
 
-export const createStage = (): any[][] => {
+export const createStage = (): Cell[][] => {
   return Array.from(Array(STAGE_HEIGHT), () => new Array(STAGE_WIDTH).fill([0, 'clear']))
 }
 

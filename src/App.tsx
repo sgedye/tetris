@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Stage, Display } from "./components";
 
 import {
@@ -7,12 +7,14 @@ import {
   createStage,
   checkCollision,
   useInterval,
+  useGameStatus,
 } from "./utils";
-import { PlayerProps, Position } from "./types";
+import { PlayerProps } from "./types";
 
 function App() {
   const [gameOver, setGameOver] = useState<boolean>(false); // game in progress, disable button.
   const [gameSpeed, setGameSpeed] = useState<number>(0);
+  const [prePauseSpeed, setPrePauseSpeed] = useState<number>(0);
 
   const {
     player,
@@ -21,12 +23,31 @@ function App() {
     playerRotate,
   } = usePlayer();
 
-  const { stage, setStage } = useStage(
+  const { stage, rowsCleared } = useStage(
     player as PlayerProps,
     resetPlayer as () => void
   );
 
-  useInterval(() => drop(), gameSpeed);
+  const { level, rows, score, setLevel, setRows, setScore } = useGameStatus(
+    rowsCleared / 2 // Note this shouldn't be divided by two... it's to "fix" a double rendering issues I have.
+  );
+
+  useInterval(() => {
+    drop();
+
+    // Increase level when player has cleared 10 rows
+    if (rows > (level + 1) * 10) {
+      setLevel((prev) => prev + 1);
+      setGameSpeed(1000 / (level + 1) + 200);
+    }
+
+    // Check if gameover
+    if (player.position.y < 1 && player.collided) {
+      console.log("GAME OVER");
+      setGameOver(true);
+      setGameSpeed(0);
+    }
+  }, gameSpeed);
 
   const move = (e: React.KeyboardEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -39,13 +60,13 @@ function App() {
           moveLaterally(1);
           break;
         case "ArrowDown":
-          dropPlayer();
+          playerDrop();
           break;
         case "ArrowUp":
           playerRotate(stage);
           break;
         case " ":
-          dropPlayer();
+          playerDrop(true);
           break;
       }
     }
@@ -63,49 +84,62 @@ function App() {
   };
 
   const startGame = () => {
-    //reset all
-    console.log("reset");
+    // Reset All
     createStage();
     resetPlayer();
-    setGameSpeed(300);
     setGameOver(false);
+    setGameSpeed(1000 / (level + 1) + 200);
+    setLevel(0);
+    setScore(0);
+    setRows(0);
   };
 
   const pauseGame = () => {
-    gameSpeed ? setGameSpeed(0) : setGameSpeed(300);
+    if (!!gameSpeed) {
+      setPrePauseSpeed(gameSpeed);
+      return setGameSpeed(0);
+    }
+    return setGameSpeed(prePauseSpeed);
   };
 
-  const drop = () => {
-    if (!checkCollision(player, stage, { x: 0, y: 1 })) {
-      return updatePlayerPosition({ x: 0, y: 1 }, false);
+  const drop = (linesToDrop: number = 1) => {
+    if (!checkCollision(player, stage, { x: 0, y: linesToDrop })) {
+      return updatePlayerPosition({ x: 0, y: linesToDrop }, false);
     }
 
-
-    if (player.position.y < 1) {
-      console.log("GAME OVER");
-      setGameOver(true);
-      setGameSpeed(0);
-    }
-
-    updatePlayerPosition({ x: 0, y: 0 }, true);
+    updatePlayerPosition({ x: 0, y: linesToDrop - 1 }, true);
   };
 
   const keyUp = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (!gameOver) {
-      if (e.key === "ArrowDown") {
-        setGameSpeed(300);
-        // console.log("intervall-on");
+      if (e.key === "ArrowDown" || e.key === " ") {
+        setGameSpeed(1000 / (level + 1) + 200);
       }
     }
   };
 
-  const dropPlayer = () => {
+  const playerDrop = (pressedSpacebar: boolean = false) => {
     setGameSpeed(0);
-    return drop();
-    // while (!checkCollision(player, stage, { x: 0, y: 1 })) {
-    //   updatePlayerPosition({ x: 0, y: 1 }, false);
-    // }
+
+    if (!pressedSpacebar) {
+      return drop();
+    }
+
+    let hasCollided = false;
+    let next = 1;
+    while (!hasCollided) {
+      next++;
+      if (checkCollision(player, stage, { x: 0, y: next })) {
+        hasCollided = true;
+      }
+    }
+    drop(next);
   };
+
+  useEffect(() => {
+    console.log("render once only.");
+    startGame();
+  }, []);
 
   console.log("re-render");
   return (
@@ -119,9 +153,9 @@ function App() {
       <Stage stage={stage} />
       <aside className="row score-area">
         {gameOver ? <p>gameover</p> : null}
-        <Display text="Score" />
-        <Display text="Rows" />
-        <Display text="Level" />
+        <Display text={`Score:  ${score}`} />
+        <Display text={`Rows:  ${rows}`} />
+        <Display text={`Level:  ${level}`} />
         <div className="col-6 col-md-12">
           <button
             // disabled={!gameOver}
