@@ -29,7 +29,7 @@ function App() {
   );
 
   const { level, rows, score, setLevel, setRows, setScore } = useGameStatus(
-    rowsCleared / 2 // Note this shouldn't be divided by two... it's to "fix" a double rendering issues I have.
+    rowsCleared
   );
 
   useInterval(() => {
