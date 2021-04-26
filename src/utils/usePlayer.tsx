@@ -42,8 +42,7 @@ export const usePlayer = (): usePlayerReturn => {
   };
 
   const updatePlayerPosition = (position: Position, collided: boolean) => {
-    console.log(position.x, player.position.x);
-    setPlayer((prev) => ({
+    return setPlayer((prev) => ({
       ...prev,
       position: {
         x: prev.position.x + position.x,
@@ -51,16 +50,14 @@ export const usePlayer = (): usePlayerReturn => {
       },
       collided,
     }));
-    return;
   };
 
   const resetPlayer = useCallback(() => {
-    setPlayer({
+    return setPlayer({
       position: { x: STAGE_WIDTH / 2 - 2, y: 0 },
       tetromino: randomTetromino().shape,
       collided: false,
     });
-    return;
   }, []);
 
   return { player, updatePlayerPosition, resetPlayer, playerRotate };

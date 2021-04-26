@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-import { Cell as CellComponent } from "./Cell";
+import CellComponent from "./Cell";
 import { Cell } from "../types";
 
 interface StageProps {

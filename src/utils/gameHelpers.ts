@@ -1,12 +1,8 @@
 
 import { PlayerProps, TETROMINOS_TYPE, Cell, TetrominosShape } from "../types"
+
 export const STAGE_WIDTH = 12;
 export const STAGE_HEIGHT = 20;
-
-
-// interface Cell {
-//   TetrimonoType, "clear" | 'merged'
-// }
 
 export const createStage = (): Cell[][] => {
   return Array.from(Array(STAGE_HEIGHT), () => new Array(STAGE_WIDTH).fill([0, 'clear']))

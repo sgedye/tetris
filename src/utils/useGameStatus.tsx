@@ -8,17 +8,15 @@ export const useGameStatus = (rowsCleared: number) => {
   const calcScore = useCallback(() => {
     const linePoints = [40, 100, 300, 1200];
 
-    console.log(rowsCleared, rows);
     if (rowsCleared > 0) {
       setScore((prev) => prev + linePoints[rowsCleared - 1] * (level + 1));
       setRows((prev) => prev + rowsCleared);
     }
-  }, [level, rows, rowsCleared]);
+  }, [level, rowsCleared]);
 
   useEffect(() => {
     calcScore();
-    console.log(score);
-  }, [calcScore, rowsCleared, score]);
+  }, [calcScore]);
 
   return { score, setScore, rows, setRows, level, setLevel };
 };

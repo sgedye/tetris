@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Stage, Display } from "./components";
 
 import {
@@ -12,7 +12,7 @@ import {
 import { PlayerProps } from "./types";
 
 function App() {
-  const [gameOver, setGameOver] = useState<boolean>(false); // game in progress, disable button.
+  const [gameOver, setGameOver] = useState<boolean>(false);
   const [gameSpeed, setGameSpeed] = useState<number>(0);
   const [prePauseSpeed, setPrePauseSpeed] = useState<number>(0);
 
@@ -41,11 +41,13 @@ function App() {
       setGameSpeed(1000 / (level + 1) + 200);
     }
 
-    // Check if gameover
-    if (player.position.y < 1 && player.collided) {
-      console.log("GAME OVER");
-      setGameOver(true);
-      setGameSpeed(0);
+    //Check gameover
+    for (let y = 0; y <= 3; y++) {
+      if (!!stage[y].filter((cell) => cell[1] === "merged").length) {
+        console.log(`¡GAME OVER! --- You scored: ${score} points!`);
+        setGameOver(true);
+        setGameSpeed(0);
+      }
     }
   }, gameSpeed);
 
@@ -136,12 +138,6 @@ function App() {
     drop(next);
   };
 
-  useEffect(() => {
-    console.log("render once only.");
-    startGame();
-  }, []);
-
-  console.log("re-render");
   return (
     <div
       className="tetris-app"
@@ -165,8 +161,7 @@ function App() {
             Start Again
           </button>
           <button
-            // disabled={!gameOver}
-            className="btn btn-block"
+            className={`btn btn-block ${gameOver && "d-none"}`}
             onClick={pauseGame}
           >
             Pause Game

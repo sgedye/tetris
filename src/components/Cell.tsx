@@ -1,11 +1,14 @@
+import { memo } from "react";
 import styled from "styled-components";
 
 import { TETROMINOS } from "../utils/gameHelpers";
 import { TetrominoType } from "../types";
 
-export const Cell: React.FC<{ type: TetrominoType }> = ({ type }) => {
+const CellComponent: React.FC<{ type: TetrominoType }> = ({ type }) => {
   return <StyledCell color={TETROMINOS[type].color} />;
 };
+
+export default memo(CellComponent);
 
 const StyledCell = styled.div<{ color: string }>`
   background: rgba(${(props) => props.color}, 0.8);
