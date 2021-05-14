@@ -42,6 +42,7 @@ function App() {
     if (!!stage[0].filter((cell) => cell[1] === "merged").length) {
       console.log(`¡GAME OVER! --- You scored: ${score} points!`);
       setGameOver(true);
+      setLevel(0);
       setGameSpeed(0);
     }
   }, gameSpeed);
@@ -154,7 +155,7 @@ function App() {
         <h1 className="text-white">TETRIS APP</h1>
       </div>
       <div className="tetris-app">
-        <Stage stage={stage} />
+        <Stage stage={stage} gamePaused={gamePaused} />
         <aside className="w-100">
           {gameOver ? <p>gameover</p> : null}
           <div className="d-flex flex-row flex-lg-column align-items-center justify-content-around mb-3">

@@ -26,7 +26,7 @@ export const Buttons: React.FC<ButtonsProps> = ({
         className={`btn btn-block mb-2 ${
           gameOver ? "btn-primary" : "btn-secondary"
         }`}
-        // disabled={!gameOver}
+        disabled={gamePaused}
         onClick={handleStartGame}
       >
         Start Again
