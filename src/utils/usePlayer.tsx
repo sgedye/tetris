@@ -6,12 +6,17 @@ import { Cell, PlayerProps, Position, TetrominosShape } from "../types";
 
 interface usePlayerReturn {
   player: PlayerProps;
+  nextTetromino: TetrominosShape;
   updatePlayerPosition: (position: Position, collided: boolean) => void;
   resetPlayer: () => void;
   playerRotate: (stage: Cell[][]) => void;
 }
 
 export const usePlayer = (): usePlayerReturn => {
+  const [nextTetromino, setNextTetromino] = useState<TetrominosShape>(
+    randomTetromino().shape
+  );
+
   const [player, setPlayer] = useState<PlayerProps>({
     position: { x: 0, y: 0 },
     tetromino: TETROMINOS[0].shape,
@@ -53,12 +58,19 @@ export const usePlayer = (): usePlayerReturn => {
   };
 
   const resetPlayer = useCallback(() => {
-    return setPlayer({
+    setPlayer({
       position: { x: STAGE_WIDTH / 2 - 2, y: 0 },
-      tetromino: randomTetromino().shape,
+      tetromino: nextTetromino,
       collided: false,
     });
-  }, []);
+    return setNextTetromino(randomTetromino().shape);
+  }, [nextTetromino]);
 
-  return { player, updatePlayerPosition, resetPlayer, playerRotate };
+  return {
+    player,
+    nextTetromino,
+    updatePlayerPosition,
+    resetPlayer,
+    playerRotate,
+  };
 };

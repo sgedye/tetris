@@ -11,9 +11,8 @@ interface StageProps {
 
 export const Stage: React.FC<StageProps> = ({ stage = [], gamePaused }) => {
   const width = stage.length ? stage[0].length : 0;
-  const height = stage.length;
   return (
-    <StyledTetris width={width} height={height}>
+    <StyledTetris width={width}>
       {stage.map((row: Cell[], rowId: number) =>
         row.map((cell: Cell, cellId: number) => (
           <CellComponent key={`${rowId}-${cellId}`} type={cell[0]} />
@@ -24,17 +23,17 @@ export const Stage: React.FC<StageProps> = ({ stage = [], gamePaused }) => {
   );
 };
 
-const StyledTetris = styled.div<{ width: number; height: number }>`
+export const StyledTetris = styled.div<{ width: number }>`
   position: relative;
   display: grid;
-  grid-template-columns: repeat(12, 1fr);
+  grid-template-columns: repeat(${(p) => p.width}, 1fr);
   grid-gap: 1px;
   background: #333;
   border: 6px solid grey;
   width: 100%;
 `;
 
-const Overlay = styled.div`
+export const Overlay = styled.div`
   position: absolute;
   top: 0;
   bottom: 0;

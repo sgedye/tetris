@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Stage, Display, Buttons } from "./components";
+import { Stage, Display, Buttons, UpNext, Legend } from "./components";
 
 import {
   useStage,
@@ -18,9 +18,15 @@ function App() {
   const [gameSpeed, setGameSpeed] = useState<number>(0);
   const [prePauseSpeed, setPrePauseSpeed] = useState<number>(0);
 
-  const { player, updatePlayerPosition, resetPlayer, playerRotate } =
-    usePlayer();
+  const {
+    player,
+    nextTetromino,
+    updatePlayerPosition,
+    resetPlayer,
+    playerRotate,
+  } = usePlayer();
 
+  console.log(player.tetromino);
   const { stage, setStage, rowsCleared } = useStage(
     player as PlayerProps,
     resetPlayer as () => void
@@ -152,12 +158,11 @@ function App() {
       onKeyUp={keyUp}
     >
       <div className="text-center py-4">
-        <h1 className="text-white">TETRIS APP</h1>
+        <h1 className="text-white">SHAUN'S TETRIS APP</h1>
       </div>
       <div className="tetris-app">
         <Stage stage={stage} gamePaused={gamePaused} />
         <aside className="w-100">
-          {gameOver ? <p>gameover</p> : null}
           <div className="d-flex flex-row flex-lg-column align-items-center justify-content-around mb-3">
             <Display text={`Score:  ${score}`} />
             <Display text={`Rows:  ${rows}`} />
@@ -168,8 +173,14 @@ function App() {
             gamePaused={gamePaused}
             handleStartGame={startGame}
             handlePauseGame={pauseGame}
-            className="d-none d-lg-block"
+            className="d-none d-lg-block mb-5"
           />
+          {!gameOver && (
+            <div className="mx-auto mb-5" style={{ width: "15rem" }}>
+              <UpNext nextTetromino={nextTetromino} gamePaused={gamePaused} />
+            </div>
+          )}
+          <Legend />
         </aside>
       </div>
       <div className="d-block d-lg-none">
