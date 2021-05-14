@@ -5,6 +5,7 @@
   "private": true,
   "homepage": "https://sgedye.github.io/tetris/",
   "dependencies": {
+    "classnames": "^2.3.1",
     "node-sass": "^5.0.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

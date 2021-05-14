@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { Stage, Display, StartButton } from "./components";
+import React, { useState } from "react";
+
+import { Stage, Display, Buttons } from "./components";
 
 import {
   useStage,
@@ -12,25 +13,21 @@ import {
 import { PlayerProps } from "./types";
 
 function App() {
-  const [gameOver, setGameOver] = useState<boolean>(false);
+  const [gameOver, setGameOver] = useState<boolean>(true);
+  const [gamePaused, setGamePaused] = useState<boolean>(false);
   const [gameSpeed, setGameSpeed] = useState<number>(0);
   const [prePauseSpeed, setPrePauseSpeed] = useState<number>(0);
 
-  const {
-    player,
-    updatePlayerPosition,
-    resetPlayer,
-    playerRotate,
-  } = usePlayer();
+  const { player, updatePlayerPosition, resetPlayer, playerRotate } =
+    usePlayer();
 
   const { stage, setStage, rowsCleared } = useStage(
     player as PlayerProps,
     resetPlayer as () => void
   );
 
-  const { level, rows, score, setLevel, setRows, setScore } = useGameStatus(
-    rowsCleared
-  );
+  const { level, rows, score, setLevel, setRows, setScore } =
+    useGameStatus(rowsCleared);
 
   useInterval(() => {
     drop();
@@ -51,7 +48,13 @@ function App() {
 
   const move = (e: React.KeyboardEvent<HTMLDivElement>) => {
     e.preventDefault();
-    if (!gameOver) {
+    if (gameOver) {
+      return;
+    }
+    if (e.key === "Enter") {
+      return pauseGame();
+    }
+    if (!gamePaused) {
       switch (e.key) {
         case "ArrowLeft":
           moveLaterally(-1);
@@ -95,10 +98,13 @@ function App() {
   };
 
   const pauseGame = () => {
-    if (!!gameSpeed) {
+    if (!gamePaused) {
+      setGamePaused((prev) => !prev);
       setPrePauseSpeed(gameSpeed);
-      return setGameSpeed(0);
+      setGameSpeed(0);
+      return;
     }
+    setGamePaused((prev) => !prev);
     return setGameSpeed(prePauseSpeed);
   };
 
@@ -111,7 +117,7 @@ function App() {
   };
 
   const keyUp = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (!gameOver) {
+    if (!gameOver && !gamePaused) {
       if (e.key === "ArrowDown" || e.key === " ") {
         setGameSpeed(1000 / (level + 1) + 200);
       }
@@ -149,27 +155,29 @@ function App() {
       </div>
       <div className="tetris-app">
         <Stage stage={stage} />
-        <aside className="row score-area">
+        <aside className="w-100">
           {gameOver ? <p>gameover</p> : null}
-          <Display text={`Score:  ${score}`} />
-          <Display text={`Rows:  ${rows}`} />
-          <Display text={`Level:  ${level}`} />
-          <div className="col-6 col-md-12">
-            <StartButton
-              className="btn btn-block"
-              // disabled={!gameOver}
-              onClick={startGame}
-            >
-              Start Again
-            </StartButton>
-            <button
-              className={`btn btn-block ${gameOver && "d-none"}`}
-              onClick={pauseGame}
-            >
-              Pause Game
-            </button>
+          <div className="d-flex flex-row flex-lg-column align-items-center justify-content-around mb-3">
+            <Display text={`Score:  ${score}`} />
+            <Display text={`Rows:  ${rows}`} />
+            <Display text={`Level:  ${level}`} />
           </div>
+          <Buttons
+            gameOver={gameOver}
+            gamePaused={gamePaused}
+            handleStartGame={startGame}
+            handlePauseGame={pauseGame}
+            className="d-none d-lg-block"
+          />
         </aside>
+      </div>
+      <div className="d-block d-lg-none">
+        <Buttons
+          gameOver={gameOver}
+          gamePaused={gamePaused}
+          handleStartGame={startGame}
+          handlePauseGame={pauseGame}
+        />
       </div>
     </div>
   );

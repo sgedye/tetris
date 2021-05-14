@@ -12,9 +12,9 @@ export const useGameStatus = (rowsCleared: number) => {
       // For some reason the rowsCleared is being doubled...
       // this shouldn't happen, it could be to do with the double rendering...
       // anyway, that is what we are dividing rows cleared by 2.
-      console.log(rowsCleared, linePoints[rowsCleared - 1]);
-      setScore((prev) => prev + linePoints[rowsCleared / 2 - 1] * (level + 1));
-      setRows((prev) => prev + rowsCleared / 2);
+      // This only occurs if the app is not wrapped in strict mode (index.tsx).
+      setScore((prev) => prev + linePoints[rowsCleared - 1] * (level + 1));
+      setRows((prev) => prev + rowsCleared);
     }
   }, [level, rowsCleared]);
 

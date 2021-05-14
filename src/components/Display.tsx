@@ -10,34 +10,29 @@ export const Display: React.FC<DisplayProps> = ({
   text = "",
 }) => {
   return (
-    <div className="col-6 col-md-12">
-      <StyledDisplay className="input-group">
-        <div className="input-group-prepend">
-          <StyledText className="input-group-text" id="basic-addon3">
-            {text}
-          </StyledText>
-        </div>
-        <StyledInput
-          type="text"
-          className="form-control"
-          id={text}
-          aria-describedby="basic-addon3"
-        />
-      </StyledDisplay>
+    <StyledDisplay className="input-group">
+      <StyledText className="input-group-prepend" id="basic-addon3">
+        {text}
+      </StyledText>
       <label htmlFor={text} className="sr-only">
         {text}
       </label>
-    </div>
+      <StyledInput
+        type="text"
+        className="form-control"
+        id={text}
+        aria-describedby="basic-addon3"
+      />
+    </StyledDisplay>
   );
 };
 
 const StyledDisplay = styled.div`
   background-color: #111;
   border-radius: 1rem;
-  // width: 100%;
-  max-width: 200px;
+  max-width: 20rem;
   padding: 0;
-  margin-bottom: 0.5rem;
+  margin: 0 0 0.5rem 0;
 `;
 
 const StyledText = styled.span`
