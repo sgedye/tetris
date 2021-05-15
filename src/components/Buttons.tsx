@@ -33,9 +33,8 @@ export const Buttons: React.FC<ButtonsProps> = ({
       </StartButton>
       <PauseButton
         active={gamePaused}
-        className={classnames("btn btn-block", {
-          "d-none": gameOver,
-        })}
+        disabled={gameOver}
+        className="btn btn-block"
         onClick={handlePauseGame}
       >
         {gamePaused ? "Resume Game" : "Pause Game"}

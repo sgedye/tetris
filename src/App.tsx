@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
-import { Stage, Display, Buttons, UpNext, Legend } from "./components";
+import { Stage, Buttons, UpNext, Legend, Confetti } from "./components";
 
 import {
   useStage,
@@ -12,12 +12,20 @@ import {
   useGameStatus,
 } from "./utils";
 import { PlayerProps } from "./types";
+import { theme } from "./theme";
 
 function App() {
   const [gameOver, setGameOver] = useState<boolean>(true);
   const [gamePaused, setGamePaused] = useState<boolean>(false);
   const [gameSpeed, setGameSpeed] = useState<number>(0);
   const [prePauseSpeed, setPrePauseSpeed] = useState<number>(0);
+  const [highscore, setHighscore] = useState<number>(0);
+  const [showConfetti, setShowConfetti] = useState<boolean>(false);
+
+  useEffect(() => {
+    const _highscore = localStorage.getItem("highscore") || "0";
+    setHighscore(parseInt(_highscore, 10));
+  }, []);
 
   const {
     player,
@@ -46,15 +54,23 @@ function App() {
 
     //Check gameover
     if (stage[0].filter((cell) => cell[1] === "merged").length > 0) {
-      console.log(`¡GAME OVER! --- You scored: ${score} points!`);
       setGameOver(true);
       setGameSpeed(0);
+
+      if (score > 0 && score > highscore) {
+        localStorage.setItem("highscore", `${score}`);
+        setHighscore(score);
+        setShowConfetti(true);
+      }
     }
   }, gameSpeed);
 
   const move = (e: React.KeyboardEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (gameOver) {
+      if (e.key === "Escape" && showConfetti) {
+        return setShowConfetti((prev) => !prev);
+      }
       return;
     }
     if (e.key === "Enter") {
@@ -156,15 +172,20 @@ function App() {
       onKeyDown={move}
       onKeyUp={keyUp}
     >
+      <Confetti
+        highscore={highscore}
+        showConfetti={showConfetti}
+        handleSetConfetti={() => setShowConfetti((prev) => !prev)}
+      />
       <div className="w-100">
         <AppTitle>SHAUN'S TETRIS APP</AppTitle>
         <div className="tetris-app">
           <Stage stage={stage} gamePaused={gamePaused} />
           <aside className="w-100 tetris-aside">
             <div className="d-flex flex-column align-items-center justify-content-around mb-3">
-              <Display text={`Score:  ${score}`} />
-              <Display text={`Rows:  ${rows}`} />
-              <Display text={`Level:  ${level}`} />
+              <StyledDisplay className="input-group">{`Score:  ${score}`}</StyledDisplay>
+              <StyledDisplay className="input-group">{`Rows:   ${rows}`}</StyledDisplay>
+              <StyledDisplay className="input-group">{`Level:   ${level}`}</StyledDisplay>
             </div>
             <Buttons
               gameOver={gameOver}
@@ -173,20 +194,33 @@ function App() {
               handlePauseGame={pauseGame}
               className="d-none d-lg-block mb-4"
             />
-            {!gameOver && (
-              <UpNextWrapper>
-                <UpNext nextTetromino={nextTetromino} gamePaused={gamePaused} />
-              </UpNextWrapper>
-            )}
+            <UpNextWrapper>
+              <UpNext
+                nextTetromino={nextTetromino}
+                gamePaused={gamePaused || gameOver}
+              />
+            </UpNextWrapper>
             <Legend />
-            {gameOver && score !== 0 && (
-              <div
-                className="bg-warning mx-auto d-flex align-items-center justify-content-center p-5"
-                style={{ maxWidth: "20rem", height: "10rem" }}
+            <HighscoreWrapper className="w-100 d-none d-lg-flex flex-column text-center px-5">
+              <h2 className="mb-2">Highscore</h2>
+              <h2 className="h1 font-weight-bold">
+                {highscore.toLocaleString("en")}
+              </h2>
+            </HighscoreWrapper>
+            {/*
+            -------- DELETE THIS ---------
+            */}
+            <div className="mx-auto text-auto">
+              <button
+                className="btn btn-secondary p-3"
+                onClick={() => setShowConfetti((p) => !p)}
               >
-                <h1 className="text-center text-white mb-0">Game Over</h1>
-              </div>
-            )}
+                DELETE ME
+              </button>
+            </div>
+            {/*
+            -------- DELETE THIS ---------
+            */}
           </aside>
         </div>
         <div className="d-block d-lg-none">
@@ -222,5 +256,29 @@ const UpNextWrapper = styled.div`
   @media screen and (min-width: 992px) {
     margin: 0 auto 1.5rem;
     width: 15rem;
+  }
+`;
+
+const HighscoreWrapper = styled.div`
+  margin: 0 auto 1.5rem;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  max-width: 20rem;
+  border-radius: 0.25rem;
+`;
+
+const StyledDisplay = styled.div`
+  background-color: #111;
+  border-radius: 1rem;
+  max-width: 20rem;
+  margin: 0 0 0.5rem 0;
+  color: white;
+  border: 4px solid grey;
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  @media screen and (min-width: 768px) {
+    font-size: 1.25rem;
   }
 `;
