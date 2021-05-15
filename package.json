@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "license": "MIT",
   "private": true,
-  "homepage": "https://sgedye.github.io/tetris/",
+  "homepage": "https://sgedye.github.io/tetris",
   "dependencies": {
     "classnames": "^2.3.1",
     "node-sass": "^5.0.0",
