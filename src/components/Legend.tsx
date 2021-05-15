@@ -1,49 +1,66 @@
-interface Data {
-  icon: string;
-  description: string;
-}
+import styled from "styled-components";
+import keyboard from "../assets/gfx/keyboard.png";
 
-const data: Data[] = [
-  {
-    icon: "^",
-    description: "Rotate tetromino",
-  },
-  {
-    icon: ">",
-    description: "Move left one square",
-  },
-  {
-    icon: ">",
-    description: "Move right one square",
-  },
-  {
-    icon: "|",
-    description: "Move tetromino down",
-  },
-  {
-    icon: "space",
-    description: "Drop tetromino",
-  },
-  {
-    icon: "enter",
-    description: "Pause/Resume the game",
-  },
+const data: string[] = [
+  "Rotate tetromino",
+  "Move left one square",
+  "Move right one square",
+  "Move tetromino down",
+  "Drop tetromino",
+  "Pause / resume",
 ];
 
 export const Legend: React.FC<{}> = () => {
   return (
-    <div
-      className="d-none d-lg-block bg-light mx-auto p-3"
-      style={{ maxWidth: "20rem" }}
-    >
-      <ul>
-        {data.map(({ icon, description }, idx) => (
-          <li key={idx}>
-            <span className="d-block mr-2">{icon}</span>
-            <span>{description}</span>
-          </li>
+    <LegendBlock className="d-none d-lg-block rounded mx-auto mb-4">
+      <StyledList>
+        {data.map((datum, idx) => (
+          <StyledListItem key={idx}>
+            <LegendIcon
+              className="d-inline-block mr-3"
+              idx={idx}
+              img={keyboard}
+            ></LegendIcon>
+            <strong>{datum}</strong>
+          </StyledListItem>
         ))}
-      </ul>
-    </div>
+      </StyledList>
+    </LegendBlock>
   );
 };
+
+const LegendBlock = styled.div`
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  max-width: 20rem;
+`;
+
+const StyledList = styled.ul`
+  list-style: none;
+  margin: 0;
+  padding: 0;
+`;
+
+const StyledListItem = styled.li`
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 3px solid rgba(0, 0, 0, 0.75);
+  &:last-of-type {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+`;
+
+const LegendIcon = styled.span<{ idx: number; img: string }>`
+  display: block;
+  width: 100px;
+  height: 40px;
+  background-image: url(${(p) => p.img});
+  background-size: 100% 600%;
+  background-repeat: no-repeat;
+  background-position: 0 calc(-40px * ${(p) => p.idx});
+  max-height: 100%;
+`;

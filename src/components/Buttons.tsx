@@ -20,7 +20,7 @@ export const Buttons: React.FC<ButtonsProps> = ({
   return (
     <div
       className={classnames("mx-auto", className)}
-      style={{ maxWidth: "20rem" }}
+      style={{ minWidth: "15rem", maxWidth: "20rem" }}
     >
       <StartButton
         className={`btn btn-block mb-2 ${

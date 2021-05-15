@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import styled from "styled-components";
 
 import { Stage, Display, Buttons, UpNext, Legend } from "./components";
 
@@ -98,7 +99,7 @@ function App() {
     setStage(createStage());
     resetPlayer();
     setGameOver(false);
-    setGameSpeed(1000 / (level + 1) + 200);
+    setGameSpeed(1200);
     setLevel(0);
     setScore(0);
     setRows(0);
@@ -157,42 +158,71 @@ function App() {
       onKeyDown={move}
       onKeyUp={keyUp}
     >
-      <div className="text-center py-4">
-        <h1 className="text-white">SHAUN'S TETRIS APP</h1>
-      </div>
-      <div className="tetris-app">
-        <Stage stage={stage} gamePaused={gamePaused} />
-        <aside className="w-100">
-          <div className="d-flex flex-row flex-lg-column align-items-center justify-content-around mb-3">
-            <Display text={`Score:  ${score}`} />
-            <Display text={`Rows:  ${rows}`} />
-            <Display text={`Level:  ${level}`} />
-          </div>
+      <div className="w-100">
+        <AppTitle>SHAUN'S TETRIS APP</AppTitle>
+        <div className="tetris-app">
+          <Stage stage={stage} gamePaused={gamePaused} />
+          <aside className="w-100 tetris-aside">
+            <div className="d-flex flex-column align-items-center justify-content-around mb-3">
+              <Display text={`Score:  ${score}`} />
+              <Display text={`Rows:  ${rows}`} />
+              <Display text={`Level:  ${level}`} />
+            </div>
+            <Buttons
+              gameOver={gameOver}
+              gamePaused={gamePaused}
+              handleStartGame={startGame}
+              handlePauseGame={pauseGame}
+              className="d-none d-lg-block mb-4"
+            />
+            {!gameOver && (
+              <UpNextWrapper>
+                <UpNext nextTetromino={nextTetromino} gamePaused={gamePaused} />
+              </UpNextWrapper>
+            )}
+            <Legend />
+            {gameOver && score !== 0 && (
+              <div
+                className="bg-warning mx-auto d-flex align-items-center justify-content-center p-5"
+                style={{ maxWidth: "20rem", height: "10rem" }}
+              >
+                <h1 className="text-center text-white mb-0">Game Over</h1>
+              </div>
+            )}
+          </aside>
+        </div>
+        <div className="d-block d-lg-none">
           <Buttons
             gameOver={gameOver}
             gamePaused={gamePaused}
             handleStartGame={startGame}
             handlePauseGame={pauseGame}
-            className="d-none d-lg-block mb-5"
           />
-          {!gameOver && (
-            <div className="mx-auto mb-5" style={{ width: "15rem" }}>
-              <UpNext nextTetromino={nextTetromino} gamePaused={gamePaused} />
-            </div>
-          )}
-          <Legend />
-        </aside>
-      </div>
-      <div className="d-block d-lg-none">
-        <Buttons
-          gameOver={gameOver}
-          gamePaused={gamePaused}
-          handleStartGame={startGame}
-          handlePauseGame={pauseGame}
-        />
+        </div>
       </div>
     </div>
   );
 }
 
 export default App;
+
+const AppTitle = styled.h1`
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 2rem;
+  text-shadow: 2px 2px 2px red;
+`;
+
+const UpNextWrapper = styled.div`
+  display: none;
+  @media screen and (min-width: 576px) {
+    display: block;
+    margin: 0 0 1.5rem;
+    width: 12rem;
+  }
+  @media screen and (min-width: 992px) {
+    margin: 0 auto 1.5rem;
+    width: 15rem;
+  }
+`;

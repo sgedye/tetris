@@ -1,17 +1,20 @@
 .my-app {
+  width: 100vw;
   min-height: 100vh;
-  background-image: url("../images/bg_stars.png");
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url("../gfx/bg_stars.png");
   background-size: cover;
 }
 
 .tetris-app {
-  margin: 1rem auto;
+  margin: 1rem auto 2rem;
   max-width: 45rem;
   display: flex;
   flex-direction: column-reverse;
   align-items: center;
   @media screen and (min-width: 992px) {
-    // margin: 2rem;
     flex-direction: row;
     justify-content: center;
     align-items: flex-start;
@@ -19,10 +22,16 @@
   }
 }
 
-.score-area {
-  margin-left: 1rem;
-  background-color: lightgrey;
-  // @media screen and (min-width: 768px) {
-  //   margin-left: 5%;
-  // }
+.tetris-aside {
+  display: flex;
+  flex-direction: column;
+  @media screen and (min-width: 576px) {
+    flex-direction: row;
+    justify-content: space-around;
+  }
+  @media screen and (min-width: 992px) {
+    flex-direction: column;
+    justify-content: flex-start;
+    max-width: 500px;
+  }
 }
