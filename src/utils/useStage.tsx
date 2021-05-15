@@ -48,8 +48,8 @@ export const useStage = (
 
       // Check if we collided
       if (player.collided) {
+        sweepRows(newStage);
         resetPlayer();
-        return sweepRows(newStage);
       }
 
       return newStage;

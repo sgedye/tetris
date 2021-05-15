@@ -27,7 +27,6 @@ function App() {
     playerRotate,
   } = usePlayer();
 
-  console.log(player.tetromino);
   const { stage, setStage, rowsCleared } = useStage(
     player as PlayerProps,
     resetPlayer as () => void
@@ -46,10 +45,9 @@ function App() {
     }
 
     //Check gameover
-    if (!!stage[0].filter((cell) => cell[1] === "merged").length) {
+    if (stage[0].filter((cell) => cell[1] === "merged").length > 0) {
       console.log(`¡GAME OVER! --- You scored: ${score} points!`);
       setGameOver(true);
-      setLevel(0);
       setGameSpeed(0);
     }
   }, gameSpeed);
@@ -140,7 +138,7 @@ function App() {
     }
 
     let hasCollided = false;
-    let next = 1;
+    let next = 0;
     while (!hasCollided) {
       next++;
       if (checkCollision(player, stage, { x: 0, y: next })) {
