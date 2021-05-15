@@ -26,7 +26,7 @@ export const GameOver: React.FC<GameOverProps> = ({
             : "Bad luck, the score to beat is"}
         </h2>
         <Highscore>{highscore.toLocaleString("en")}</Highscore>
-        <StyledButton className="btn btn-dark btn-lg" onClick={startNewGame}>
+        <StyledButton className="btn btn-dark" onClick={startNewGame}>
           <strong>{topScore ? "Thanks" : "Try Again"}</strong>
         </StyledButton>
       </HighscoreBox>
@@ -48,11 +48,13 @@ const GameOverOverlay = styled.div<{ active: boolean }>`
 `;
 
 const HighscoreBox = styled.div<{ active: boolean }>`
-  padding: 1rem 2rem;
+  max-width: 50%;
+  padding: 2rem 1rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
   z-index: 5;
   border-radius: 1rem;
   transition: all 1500ms cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -62,10 +64,10 @@ const HighscoreBox = styled.div<{ active: boolean }>`
   text-shadow: 2px 2px 2px ${(p) => (p.active ? "black" : theme.light)};
   transform: ${(p) => (p.active ? "scale(1.5)" : "scale(0)")};
   h1 {
-    font-size: 2rem;
+    font-size: 1.75rem;
   }
   h2 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
   }
   @media screen and (min-width: 992px) {
     padding: 3rem 4rem;
@@ -83,6 +85,10 @@ const StyledButton = styled.button`
   &:hover {
     border: 2px solid ${theme.light};
     filter: invert(1);
+  }
+  @media screen and (min-width: 992px) {
+    font-size: 1.25rem;
+    padding: 0.5rem 1rem;
   }
 `;
 
