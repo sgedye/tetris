@@ -14,6 +14,8 @@ import {
 import { PlayerProps } from "./types";
 import { theme } from "./theme";
 
+import arrows from "./assets/gfx/arrows.png";
+
 function App() {
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [gamePaused, setGamePaused] = useState<boolean>(false);
@@ -141,17 +143,14 @@ function App() {
   };
 
   const keyUp = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (!gameOver && !gamePaused) {
-      if (e.key === "ArrowDown" || e.key === " ") {
-        setGameSpeed(1000 / (level + 1) + 200);
-      }
+    if (!gameOver && !gamePaused && e.key === "ArrowDown") {
+      setGameSpeed(1000 / (level + 1) + 200);
     }
   };
 
   const playerDrop = (pressedSpacebar: boolean = false) => {
-    setGameSpeed(0);
-
     if (!pressedSpacebar) {
+      setGameSpeed(0);
       return drop();
     }
 
@@ -181,7 +180,7 @@ function App() {
         startNewGame={() => startGame()}
       />
       <div className="w-100">
-        <AppTitle>SHAUN'S TETRIS APP</AppTitle>
+        <AppTitle>TETRIS APP</AppTitle>
         <div className="tetris-app">
           <Stage stage={stage} gamePaused={gamePaused} />
           <aside className="w-100 tetris-aside">
@@ -213,6 +212,12 @@ function App() {
           </aside>
         </div>
         <div className="d-block d-lg-none">
+          <div className="d-flex justify-content-around mb-3">
+            <Control idx={0} img={arrows} onClick={() => playerRotate(stage)} />
+            <Control idx={2} img={arrows} onClick={() => moveLaterally(-1)} />
+            <Control idx={3} img={arrows} onClick={() => moveLaterally(1)} />
+            <Control idx={1} img={arrows} onClick={() => playerDrop(true)} />
+          </div>
           <Buttons
             gameOver={gameOver}
             gamePaused={gamePaused}
@@ -231,8 +236,11 @@ const AppTitle = styled.h1`
   display: block;
   color: white;
   text-align: center;
-  padding: 2rem;
+  padding: 0.5rem;
   text-shadow: 2px 2px 2px ${theme.danger};
+  @media screen and (min-width: 576px) {
+    padding: 2rem;
+  }
 `;
 
 const UpNextWrapper = styled.div`
@@ -269,5 +277,29 @@ const StyledDisplay = styled.div`
   text-align: center;
   @media screen and (min-width: 768px) {
     font-size: 1.25rem;
+  }
+`;
+
+const Control = styled.button<{ idx: number; img: string }>`
+  position: relative;
+  display: block;
+  width: 75px;
+  height: 75px;
+  border: 0;
+  background-color: transparent;
+  border-radius: 1rem;
+  padding: 0;
+  margin: 0.25rem;
+  background-image: url(${(p) => p.img});
+  background-size: 100% 400%;
+  background-repeat: no-repeat;
+  background-position: 0 calc(-75px * ${(p) => p.idx});
+  transition: 50ms all cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: translate(0, 0);
+  &:active {
+    transform: translate(1px, 1px);
+  }
+  &:focus {
+    outline: none;
   }
 `;

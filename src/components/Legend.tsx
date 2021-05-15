@@ -6,8 +6,8 @@ const data: string[] = [
   "Move left one square",
   "Move right one square",
   "Move tetromino down",
-  "Drop tetromino",
   "Pause / resume",
+  "Drop tetromino",
 ];
 
 export const Legend: React.FC<{}> = () => {
