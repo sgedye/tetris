@@ -2,36 +2,39 @@ import styled from "styled-components";
 import ReactConfetti from "react-confetti";
 import { theme } from "../theme";
 
-interface ConfettiProps {
+interface GameOverProps {
   highscore: number;
-  showConfetti: boolean;
-  handleSetConfetti: () => void;
+  gameOver: boolean;
+  topScore: boolean;
+  startNewGame: () => void;
 }
 
-export const Confetti: React.FC<ConfettiProps> = ({
+export const GameOver: React.FC<GameOverProps> = ({
   highscore,
-  showConfetti,
-  handleSetConfetti,
+  gameOver,
+  topScore,
+  startNewGame,
 }) => {
   return (
-    <ConfettiOverlay active={showConfetti}>
-      {showConfetti && <ReactConfetti />}
-      <HighscoreBox active={showConfetti}>
-        <h1>Congratulations!</h1>
-        <h2>on your new highscore</h2>
+    <GameOverOverlay active={topScore || gameOver}>
+      {topScore && <ReactConfetti />}
+      <HighscoreBox active={topScore || gameOver}>
+        <h1>{topScore ? "Congratulations!" : "Game Over!"}</h1>
+        <h2>
+          {topScore
+            ? "on your new highscore"
+            : "Bad luck, the score to beat is"}
+        </h2>
         <Highscore>{highscore.toLocaleString("en")}</Highscore>
-        <StyledButton
-          className="btn btn-dark btn-lg"
-          onClick={handleSetConfetti}
-        >
-          <strong>Thanks</strong>
+        <StyledButton className="btn btn-dark btn-lg" onClick={startNewGame}>
+          <strong>{topScore ? "Thanks" : "Try Again"}</strong>
         </StyledButton>
       </HighscoreBox>
-    </ConfettiOverlay>
+    </GameOverOverlay>
   );
 };
 
-const ConfettiOverlay = styled.div<{ active: boolean }>`
+const GameOverOverlay = styled.div<{ active: boolean }>`
   position: absolute;
   top: 0;
   bottom: 0;

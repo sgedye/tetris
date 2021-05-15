@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
-import { Stage, Buttons, UpNext, Legend, Confetti } from "./components";
+import { Stage, Buttons, UpNext, Legend, GameOver } from "./components";
 
 import {
   useStage,
@@ -15,17 +15,12 @@ import { PlayerProps } from "./types";
 import { theme } from "./theme";
 
 function App() {
-  const [gameOver, setGameOver] = useState<boolean>(true);
+  const [gameOver, setGameOver] = useState<boolean>(false);
   const [gamePaused, setGamePaused] = useState<boolean>(false);
   const [gameSpeed, setGameSpeed] = useState<number>(0);
   const [prePauseSpeed, setPrePauseSpeed] = useState<number>(0);
   const [highscore, setHighscore] = useState<number>(0);
   const [showConfetti, setShowConfetti] = useState<boolean>(false);
-
-  useEffect(() => {
-    const _highscore = localStorage.getItem("highscore") || "0";
-    setHighscore(parseInt(_highscore, 10));
-  }, []);
 
   const {
     player,
@@ -43,9 +38,13 @@ function App() {
   const { level, rows, score, setLevel, setRows, setScore } =
     useGameStatus(rowsCleared);
 
-  useInterval(() => {
-    drop();
+  useEffect(() => {
+    const _highscore = localStorage.getItem("highscore") || "0";
+    setHighscore(parseInt(_highscore, 10));
+    startGame();
+  }, []);
 
+  useInterval(() => {
     // Increase level when player has cleared 10 rows
     if (rows > (level + 1) * 10) {
       setLevel((prev) => prev + 1);
@@ -62,14 +61,16 @@ function App() {
         setHighscore(score);
         setShowConfetti(true);
       }
+      return;
     }
+    drop();
   }, gameSpeed);
 
   const move = (e: React.KeyboardEvent<HTMLDivElement>) => {
     e.preventDefault();
     if (gameOver) {
-      if (e.key === "Escape" && showConfetti) {
-        return setShowConfetti((prev) => !prev);
+      if (e.key === "Escape" && gameOver) {
+        return startGame();
       }
       return;
     }
@@ -113,6 +114,7 @@ function App() {
     setStage(createStage());
     resetPlayer();
     setGameOver(false);
+    setShowConfetti(false);
     setGameSpeed(1200);
     setLevel(0);
     setScore(0);
@@ -172,10 +174,11 @@ function App() {
       onKeyDown={move}
       onKeyUp={keyUp}
     >
-      <Confetti
+      <GameOver
         highscore={highscore}
-        showConfetti={showConfetti}
-        handleSetConfetti={() => setShowConfetti((prev) => !prev)}
+        gameOver={gameOver}
+        topScore={showConfetti}
+        startNewGame={() => startGame()}
       />
       <div className="w-100">
         <AppTitle>SHAUN'S TETRIS APP</AppTitle>
@@ -207,20 +210,6 @@ function App() {
                 {highscore.toLocaleString("en")}
               </h2>
             </HighscoreWrapper>
-            {/*
-            -------- DELETE THIS ---------
-            */}
-            <div className="mx-auto text-auto">
-              <button
-                className="btn btn-secondary p-3"
-                onClick={() => setShowConfetti((p) => !p)}
-              >
-                DELETE ME
-              </button>
-            </div>
-            {/*
-            -------- DELETE THIS ---------
-            */}
           </aside>
         </div>
         <div className="d-block d-lg-none">
@@ -243,7 +232,7 @@ const AppTitle = styled.h1`
   color: white;
   text-align: center;
   padding: 2rem;
-  text-shadow: 2px 2px 2px red;
+  text-shadow: 2px 2px 2px ${theme.danger};
 `;
 
 const UpNextWrapper = styled.div`

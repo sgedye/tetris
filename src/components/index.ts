@@ -1,6 +1,6 @@
 export * from "./Buttons"
 export * from "./Cell"
-export * from "./Confetti"
+export * from "./GameOver"
 export * from "./Legend"
 export * from "./Stage"
 export * from "./UpNext"
