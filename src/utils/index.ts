@@ -1,3 +1,4 @@
+export * from "./checkGameOver"
 export * from "./gameHelpers"
 export * from "./useGameStatus"
 export * from "./useInterval"

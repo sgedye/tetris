@@ -10,6 +10,7 @@ import {
   checkCollision,
   useInterval,
   useGameStatus,
+  checkGameOver,
 } from "./utils";
 import { PlayerProps } from "./types";
 import { theme } from "./theme";
@@ -43,28 +44,32 @@ function App() {
   useEffect(() => {
     const _highscore = localStorage.getItem("highscore") || "0";
     setHighscore(parseInt(_highscore, 10));
-    startGame();
   }, []);
 
+  const handleGameOver = () => {
+    setGameOver(true);
+    setGameSpeed(0);
+
+    if (score > 0 && score > highscore) {
+      localStorage.setItem("highscore", `${score}`);
+      setHighscore(score);
+      setShowConfetti(true);
+    }
+    return;
+  };
+
   useInterval(() => {
+    //Check gameover - if next tetris peice will end up on top of a merged peice.
+    if (checkGameOver(stage, nextTetromino)) {
+      handleGameOver();
+    }
+
     // Increase level when player has cleared 10 rows
     if (rows > (level + 1) * 10) {
       setLevel((prev) => prev + 1);
       setGameSpeed(1000 / (level + 1) + 200);
     }
 
-    //Check gameover
-    if (stage[0].filter((cell) => cell[1] === "merged").length > 0) {
-      setGameOver(true);
-      setGameSpeed(0);
-
-      if (score > 0 && score > highscore) {
-        localStorage.setItem("highscore", `${score}`);
-        setHighscore(score);
-        setShowConfetti(true);
-      }
-      return;
-    }
     drop();
   }, gameSpeed);
 
@@ -140,6 +145,10 @@ function App() {
     }
 
     updatePlayerPosition({ x: 0, y: linesToDrop - 1 }, true);
+
+    if (checkGameOver(stage, nextTetromino)) {
+      handleGameOver();
+    }
   };
 
   const keyUp = (e: React.KeyboardEvent<HTMLDivElement>) => {

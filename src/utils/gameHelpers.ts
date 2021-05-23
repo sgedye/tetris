@@ -94,4 +94,3 @@ export const randomTetromino = (): TETROMINOS_TYPE => {
       return TETROMINOS[0];
   }
 }
-

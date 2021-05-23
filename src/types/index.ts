@@ -21,7 +21,8 @@ export interface Position {
   y: number;
 }
 
-export type TetrominosShape = (0 | 'I' | 'J' | 'L' | 'O' | 'S' | 'T' | 'Z')[][]
+export type TetrominoOptions = (0 | 'I' | 'J' | 'L' | 'O' | 'S' | 'T' | 'Z')
+export type TetrominosShape = TetrominoOptions[][]
 
 
 //TETROMINOS
