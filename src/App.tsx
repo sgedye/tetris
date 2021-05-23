@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+
 import styled from "styled-components";
 
 import { Stage, Buttons, UpNext, Legend, GameOver } from "./components";
@@ -11,6 +12,7 @@ import {
   useInterval,
   useGameStatus,
   checkGameOver,
+  GlobalProvider,
 } from "./utils";
 import { PlayerProps } from "./types";
 import { theme } from "./theme";
@@ -175,67 +177,86 @@ function App() {
   };
 
   return (
-    <div
-      className="my-app p-4"
-      role="button"
-      tabIndex={0}
-      onKeyDown={move}
-      onKeyUp={keyUp}
+    <GlobalProvider
+      gameOver={gameOver}
+      setGameOver={setGameOver}
+      gamePaused={gamePaused}
+      setGamePaused={setGamePaused}
+      gameSpeed={gameSpeed}
+      setGameSpeed={setGameSpeed}
+      prePauseSpeed={prePauseSpeed}
+      setPrePauseSpeed={setPrePauseSpeed}
+      highscore={highscore}
+      setHighscore={setHighscore}
+      showConfetti={showConfetti}
+      setShowConfetti={setShowConfetti}
     >
-      <GameOver
-        highscore={highscore}
-        gameOver={gameOver}
-        topScore={showConfetti}
-        startNewGame={() => startGame()}
-      />
-      <div className="w-100">
-        <AppTitle>TETRIS APP</AppTitle>
-        <div className="tetris-app">
-          <Stage stage={stage} gamePaused={gamePaused} />
-          <aside className="w-100 tetris-aside">
-            <div className="d-flex flex-column align-items-center justify-content-around mb-3">
-              <StyledDisplay className="input-group">{`Score:  ${score}`}</StyledDisplay>
-              <StyledDisplay className="input-group">{`Rows:   ${rows}`}</StyledDisplay>
-              <StyledDisplay className="input-group">{`Level:   ${level}`}</StyledDisplay>
+      <div
+        className="my-app p-4"
+        role="button"
+        tabIndex={0}
+        onKeyDown={move}
+        onKeyUp={keyUp}
+      >
+        <GameOver
+          highscore={highscore}
+          gameOver={gameOver}
+          topScore={showConfetti}
+          startNewGame={() => startGame()}
+        />
+        <div className="w-100">
+          <AppTitle>TETRIS APP</AppTitle>
+          <div className="tetris-app">
+            <Stage stage={stage} gamePaused={gamePaused} />
+            <aside className="w-100 tetris-aside">
+              <div className="d-flex flex-column align-items-center justify-content-around mb-3">
+                <StyledDisplay className="input-group">{`Score:  ${score}`}</StyledDisplay>
+                <StyledDisplay className="input-group">{`Rows:   ${rows}`}</StyledDisplay>
+                <StyledDisplay className="input-group">{`Level:   ${level}`}</StyledDisplay>
+              </div>
+              <Buttons
+                gameOver={gameOver}
+                gamePaused={gamePaused}
+                handleStartGame={startGame}
+                handlePauseGame={pauseGame}
+                className="d-none d-lg-block mb-4"
+              />
+              <UpNextWrapper>
+                <UpNext
+                  nextTetromino={nextTetromino}
+                  gamePaused={gamePaused || gameOver}
+                />
+              </UpNextWrapper>
+              <Legend />
+              <HighscoreWrapper className="w-100 d-none d-lg-flex flex-column text-center px-5">
+                <h2 className="mb-2">Highscore</h2>
+                <h2 className="h1 font-weight-bold">
+                  {highscore.toLocaleString("en")}
+                </h2>
+              </HighscoreWrapper>
+            </aside>
+          </div>
+          <div className="d-block d-lg-none">
+            <div className="d-flex justify-content-around mb-3">
+              <Control
+                idx={0}
+                img={arrows}
+                onClick={() => playerRotate(stage)}
+              />
+              <Control idx={2} img={arrows} onClick={() => moveLaterally(-1)} />
+              <Control idx={3} img={arrows} onClick={() => moveLaterally(1)} />
+              <Control idx={1} img={arrows} onClick={() => playerDrop(true)} />
             </div>
             <Buttons
               gameOver={gameOver}
               gamePaused={gamePaused}
               handleStartGame={startGame}
               handlePauseGame={pauseGame}
-              className="d-none d-lg-block mb-4"
             />
-            <UpNextWrapper>
-              <UpNext
-                nextTetromino={nextTetromino}
-                gamePaused={gamePaused || gameOver}
-              />
-            </UpNextWrapper>
-            <Legend />
-            <HighscoreWrapper className="w-100 d-none d-lg-flex flex-column text-center px-5">
-              <h2 className="mb-2">Highscore</h2>
-              <h2 className="h1 font-weight-bold">
-                {highscore.toLocaleString("en")}
-              </h2>
-            </HighscoreWrapper>
-          </aside>
-        </div>
-        <div className="d-block d-lg-none">
-          <div className="d-flex justify-content-around mb-3">
-            <Control idx={0} img={arrows} onClick={() => playerRotate(stage)} />
-            <Control idx={2} img={arrows} onClick={() => moveLaterally(-1)} />
-            <Control idx={3} img={arrows} onClick={() => moveLaterally(1)} />
-            <Control idx={1} img={arrows} onClick={() => playerDrop(true)} />
           </div>
-          <Buttons
-            gameOver={gameOver}
-            gamePaused={gamePaused}
-            handleStartGame={startGame}
-            handlePauseGame={pauseGame}
-          />
         </div>
       </div>
-    </div>
+    </GlobalProvider>
   );
 }
 
